@@ -109,7 +109,7 @@ namespace StarFallDemo
                     {
                         //set up some random fun for the star arguments.
                         float randomXcoord = (float)_rng.Next(50, 550);  //random x position
-                        float yCoord = -100;  //constant y coordinate, 100 pixels above the scene
+                        float yCoord = -300;  //constant y coordinate, 100 pixels above the scene
                         float randomScale = (_rng.Next(100, 201) / 100f) + 0.25f; //random scaling factor between 1.25 and 2.25. If the stars are too small, they are hard to click.
                         float randomSpeed = _rng.Next(1, 301) / 100f + 1.5f;  //a random fall speed that is somewhere between 1.5 and about 2.5ish
 
