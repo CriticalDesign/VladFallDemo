@@ -15,6 +15,7 @@ namespace StarFallDemo
         //Variables for our game assets
         private Texture2D _backgroundSprite;
         private Texture2D _starSprite;
+        private Texture2D _explosionSprite;
         private Texture2D _gameOverSprite;
         private SpriteFont _gamefont;
         private SoundEffect _popSound;
@@ -22,6 +23,9 @@ namespace StarFallDemo
 
         //this is a list-based demo, so here's the list that tracks the stars on the screen
         private List<Star> _starList;
+
+        //and another list to track our explosions >:)
+        private List<Explosion> _explosionList;
 
         //this is just a fun way to make the background colour a bit different each time you run the game
         private Color _backgroundColor;
@@ -56,6 +60,7 @@ namespace StarFallDemo
             //lots to initialize
             _timer = 0;  //timer starts at zero
             _starList = new List<Star>();  //new empty star list
+            _explosionList = new List<Explosion>();  //new empty star list
             _rng = new System.Random();  //new _rng object
             _waveCounter = 0;   //waves starts at zero
             _starsMissed = 0;  //no missed stars to start
@@ -72,6 +77,7 @@ namespace StarFallDemo
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _backgroundSprite = Content.Load<Texture2D>("background");
             _starSprite = Content.Load<Texture2D>("star");
+            _explosionSprite = Content.Load<Texture2D>("smallExplosion");
             _gameOverSprite = Content.Load<Texture2D>("gameOver");
             _gamefont = Content.Load<SpriteFont>("GameFont");
             _popSound = Content.Load<SoundEffect>("popSound");
@@ -143,11 +149,25 @@ namespace StarFallDemo
                         //if the mouse click coordinates are withing the star's bounds...
                         if (starBounds.Contains(new Vector2(_currentMouseState.X,_currentMouseState.Y)))
                         {
-                            _starList.RemoveAt(i);  //remove it from the list
+                            //replace the current star with an Explosion object that is at the same locaton. Also pass the colour, scale and angle so that 
+                            //the explosion matched the star's properties.
+                            _explosionList.Add(new Explosion(3, 3, _starList[i].getX(), _starList[i].getY(), _starList[i].getColor(), _starList[i].getScale(), _starList[i].getAngle(), _explosionSprite));
+                            _starList.RemoveAt(i);  //remove the star from the star list
                             _popSound.Play();       //play a cool popping sound
                         }
                     }
                 }
+
+                //for each explosion in the explosion list...
+                for (int i = 0; i < _explosionList.Count; i++)
+                {
+                    _explosionList[i].Update(_timer);  //update the explosion's info, pass the time to control the animation speed (cheap hack)
+                    
+                    //if the explosion's life time has passed (i.e., the animation cycle is complete)
+                    if (_explosionList[i].IsExpired())
+                        _explosionList.RemoveAt(i);  //remove it from the list.
+                }
+
             }//end if-statement that says we have missed 5 stars
 
 
@@ -170,6 +190,12 @@ namespace StarFallDemo
             if(_starsMissed >= 5)
             {
                 DrawGameOver();  //show game over image
+            }
+
+            //for each explosion still in the list, draw what needs drawing
+            for (int i = 0; i < _explosionList.Count; i++)
+            {
+                _explosionList[i].Draw(_spriteBatch);
             }
 
             base.Draw(gameTime);

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -56,6 +55,9 @@ namespace StarFallDemo
         //we need an accessor for Y so that we can tell when stars have fallen off the screen.
         public float getY() { return _y; }
 
+        //an accessor for X so that we can access this attribute if needed.
+        public float getX() { return _x; }
+
         //we need the star's bounds so that we can tell if we've clicked on it or not.
         public Rectangle getBounds()
         {
@@ -64,6 +66,15 @@ namespace StarFallDemo
             //size with the scaling.
             return new Rectangle((int)(_x - _starTexture.Width / 2), (int)(_y - _starTexture.Height / 2), (int)(_starTexture.Width*_scale), (int)(_starTexture.Height*_scale));
         }
+
+        //a colour accessor to access our color
+        public Color getColor() { return _color; }
+
+        //an accessor to get our angle
+        public float getAngle() { return _angle; }
+
+        //an accessor to get our scale
+        public float getScale() { return _scale; }
 
         //finally, use the complex draw method to draw, scale, and rotate the stars.
         public void Draw(SpriteBatch _spriteBatch)
