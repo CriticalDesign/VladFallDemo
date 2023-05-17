@@ -17,9 +17,10 @@ namespace VladFallDemo
         private Texture2D _starSprite;
         private Texture2D _explosionSprite;
         private Texture2D _gameOverSprite;
-        private SpriteFont _gamefont;
-        private SoundEffect _popSound;
+        private SpriteFont _gameFont;
+        private SoundEffect _popSound, _bellSound;
         private Song _music; //see attribution at the bottom of this file
+        private Song _vladSong;
 
         //this is a list-based demo, so here's the list that tracks the stars on the screen
         private List<Star> _starList;
@@ -39,6 +40,10 @@ namespace VladFallDemo
         //random makes games fun - why does this say System.Random? Well, I was getting an error about namespaces conflicting. Something in the 
         //using lines (at the top) is conflicting with the System libraries, so, I changed this to System.Random to address the issue.
         System.Random _rng;
+
+        private bool _vladMode;
+        private Texture2D _vladSprite;
+        private int _vladModeEngagedCounter;
 
         //the only thing I changed in here is the resolution of the game. If you change that (800x600), you'll need to make other changes in the code
         //so that the stars spawn across the whole screen.
@@ -68,6 +73,8 @@ namespace VladFallDemo
             //random background color - by using 0 to 128 the background should stay dark and contrast with the bright stars
             _backgroundColor = new Color(_rng.Next(0, 128), _rng.Next(0, 128), _rng.Next(0, 128));
 
+            _vladMode = false;
+            _vladModeEngagedCounter = 300;
             base.Initialize();
         }
 
@@ -79,12 +86,16 @@ namespace VladFallDemo
             _starSprite = Content.Load<Texture2D>("star");
             _explosionSprite = Content.Load<Texture2D>("smallExplosion");
             _gameOverSprite = Content.Load<Texture2D>("gameOver");
-            _gamefont = Content.Load<SpriteFont>("GameFont");
+            _gameFont = Content.Load<SpriteFont>("GameFont");
             _popSound = Content.Load<SoundEffect>("popSound");
+            _bellSound = Content.Load<SoundEffect>("bellSound");
             _music = Content.Load<Song>("song");
-            
+            _vladSong = Content.Load<Song>("vladSong");
+
             //start the music!
             MediaPlayer.Play(_music);
+
+            _vladSprite = Content.Load<Texture2D>("smallVlad");
 
         }
 
@@ -93,6 +104,16 @@ namespace VladFallDemo
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+
+            if (Keyboard.GetState().IsKeyDown(Keys.V) && _vladMode == false)
+            {
+                _vladMode = true;
+                _starSprite = _vladSprite;
+                MediaPlayer.Stop();
+                _bellSound.Play();
+                MediaPlayer.Play(_vladSong);
+                
+            }
 
             //most of the game logic follows here.....
 
@@ -198,6 +219,8 @@ namespace VladFallDemo
                 _explosionList[i].Draw(_spriteBatch);
             }
 
+
+
             base.Draw(gameTime);
         }
 
@@ -215,11 +238,22 @@ namespace VladFallDemo
         public void DrawUI()
         {
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_gamefont, "Wave:", new Vector2(25, 25), Color.White);
-            _spriteBatch.DrawString(_gamefont, _waveCounter + "", new Vector2(125, 25), Color.White);
+            _spriteBatch.DrawString(_gameFont, "Wave:", new Vector2(25, 25), Color.White);
+            _spriteBatch.DrawString(_gameFont, _waveCounter + "", new Vector2(125, 25), Color.White);
 
-            _spriteBatch.DrawString(_gamefont, "Stars  Missed:", new Vector2(555, 25), Color.White);
-            _spriteBatch.DrawString(_gamefont, _starsMissed + "", new Vector2(750, 25), Color.White);
+            if(_vladMode)
+                _spriteBatch.DrawString(_gameFont, "Vlads  Missed:", new Vector2(555, 25), Color.White);
+            else
+                _spriteBatch.DrawString(_gameFont, "Stars  Missed:", new Vector2(555, 25), Color.White);
+            _spriteBatch.DrawString(_gameFont, _starsMissed + "", new Vector2(750, 25), Color.White);
+
+
+            if (_vladMode && _vladModeEngagedCounter > 0)
+            { 
+                _spriteBatch.DrawString(_gameFont, "Vlad    mode    ENGAGED!", new Vector2(75, 450), Color.Red * (_vladModeEngagedCounter/100f), -0.45f, new Vector2(0,0), new Vector2(2,2), SpriteEffects.None, 0);
+                _vladModeEngagedCounter--;
+            }
+
             _spriteBatch.End();
         }
 
