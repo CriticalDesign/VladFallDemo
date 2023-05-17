@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace StarFallDemo
+namespace VladFallDemo
 {
     //This is a (relatively) straightforward class that describes a star object. Most
     //of the attributes are to make the star seem more dynamic.

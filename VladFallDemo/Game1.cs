@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 
-namespace StarFallDemo
+namespace VladFallDemo
 {
     public class Game1 : Game
     {

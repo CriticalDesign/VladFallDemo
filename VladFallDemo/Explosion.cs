@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 
 
-namespace StarFallDemo
+namespace VladFallDemo
 {
 
     //Much of this code come from this MonoGame 2D animation tutorial:
